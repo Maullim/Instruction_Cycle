@@ -10,9 +10,9 @@ void Memory::write(uint16_t valueAR, uint16_t v) { value[valueAR] = v; }
 uint16_t Memory::read(uint16_t valueAR) { return value[valueAR]; }
 
 // Cpu
-std::array<u_int16_t, 100> Cpu::initMemory()
+std::array<uint16_t, 100> Cpu::initMemory()
 {
-    std::array<u_int16_t, 100> m{};
+    std::array<uint16_t, 100> m{};
     m[0] = 0x2004;
     m[1] = 0x1005;
     m[2] = 0x3006;
@@ -23,9 +23,9 @@ std::array<u_int16_t, 100> Cpu::initMemory()
     return m;
 }
 
-std::array<u_int16_t, 100> Cpu::testMemory()
+std::array<uint16_t, 100> Cpu::testMemory()
 {
-    std::array<u_int16_t, 100> m{};
+    std::array<uint16_t, 100> m{};
     // program
     m[0]  = 0x2032; m[1]  = 0x0033; m[2]  = 0x3034;
     m[3]  = 0x2032; m[4]  = 0x1033; m[5]  = 0x3035;
@@ -512,7 +512,7 @@ bool Cpu::isRunning() const
 }
 
 // cpu 테스트
-std::array<u_int16_t, 100> Cpu::memory_load()
+std::array<uint16_t, 100> Cpu::memory_load()
 {
     return this->m.value;
 }

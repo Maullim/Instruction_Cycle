@@ -39,8 +39,11 @@ g++ main.cpp computer.cpp -o a.out
 ### Windows
 
 **방법 1: MinGW-w64 (권장)**
-1. [winlibs.com](https://winlibs.com) 또는 [mingw-w64.org](https://www.mingw-w64.org)에서 MinGW-w64 다운로드
-2. 설치 후 환경변수 `PATH`에 `C:\mingw64\bin` 추가
+> 설치 방법: https://movefun-tech.tistory.com/40
+
+1. [mingw-w64.org](https://www.mingw-w64.org)에서 MinGW-w64 다운로드
+- 설치한 장소: https://www.msys2.org/ 에서 x86-64로
+2. 설치 후 환경변수 `PATH`에 `C:\msys2\mingw64\bin` 추가
 3. 명령 프롬프트(cmd) 또는 PowerShell에서:
 ```cmd
 g++ main.cpp computer.cpp -o a.exe

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <array>
+#include <cstdint>
 #ifndef COMPUTER_H
 #define COMPUTER_H
 
@@ -78,8 +79,8 @@ private:
     // memory
     Memory m;
 
-    static std::array<u_int16_t, 100> initMemory();
-    static std::array<u_int16_t, 100> testMemory();
+    static std::array<uint16_t, 100> initMemory();
+    static std::array<uint16_t, 100> testMemory();
 
     // AND 실행
     void execAND();
@@ -135,6 +136,6 @@ public:
     bool isRunning() const;
 
     // 테스트
-    std::array<u_int16_t, 100> memory_load();
+    std::array<uint16_t, 100> memory_load();
 };
 #endif
