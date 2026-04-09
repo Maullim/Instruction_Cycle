@@ -43,12 +43,17 @@ g++ main.cpp computer.cpp -o a.out
 
 1. [mingw-w64.org](https://www.mingw-w64.org)에서 MinGW-w64 다운로드
 - 설치한 장소: https://www.msys2.org/ 에서 x86-64로
-2. 설치 후 환경변수 `PATH`에 `C:\msys2\mingw64\bin` 추가
-3. 명령 프롬프트(cmd) 또는 PowerShell에서:
+2. 설치 후 MSYS2 터미널에서 다음 코드 실행
+```bash
+pacman -S mingw-w64-ucrt-x86_64-gcc
+```
+3. 설치 후 환경변수 `PATH`에 `C:\msys2\mingw64\bin` 추가
+
+4. 명령 프롬프트(cmd) 또는 PowerShell에서:
 ```cmd
 chcp 65001
 g++ main.cpp computer.cpp -o a.exe
-a.exe
+.\a.exe
 ```
 
 > `chcp 65001` — 한글 출력을 위해 터미널 인코딩을 UTF-8로 설정
