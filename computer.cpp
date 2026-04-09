@@ -233,8 +233,9 @@ void Cpu::execADD()
     }
     else if (this->sc == 5)
     {
-        // E <- C_out 구현 해야 함.
-        this->AC.load(this->AC.value + this->DR.value);
+        uint32_t sum = static_cast<uint32_t>(this->AC.value) + static_cast<uint32_t>(this->DR.value);
+        this->E = (sum >> 16) & 1;
+        this->AC.load(static_cast<uint16_t>(sum));
         std::cout << "T" << this->sc << ":\nAC <- AC + DR, E <- C_out, SC <- 0\n";
         std::cout << std::hex << "AC = 0x" << this->AC.value << ", E = " << this->E << "\n\n";
         this->clearSC();
@@ -403,7 +404,7 @@ void Cpu::execISZ()
     {
         std::cout << "T" << this->sc << ":\nM[AR] <- DR, IF (DR = 0) then (PC <- PC + 1), SC <- 0\n";
         this->m.write(this->AR.value, this->DR.value);
-        std::cout << std::hex << "M[AR] = 0x" << this->m.read(this->AR.value);
+        std::cout << std::hex << "M[AR] = 0x" << this->m.read(this->AR.value) << "\n";
         if (this->DR.value == 0)
         {
             this->PC.increment();
