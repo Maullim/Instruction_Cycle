@@ -27,22 +27,46 @@ std::array<uint16_t, 100> Cpu::testMemory()
 {
     std::array<uint16_t, 100> m{};
     // program
-    m[0]  = 0x2032; m[1]  = 0x0033; m[2]  = 0x3034;
-    m[3]  = 0x2032; m[4]  = 0x1033; m[5]  = 0x3035;
-    m[6]  = 0x7800; m[7]  = 0x7400; m[8]  = 0x2032;
-    m[9]  = 0x7200; m[10] = 0x7100; m[11] = 0x7080;
-    m[12] = 0x7040; m[13] = 0x7020; m[14] = 0x2036;
-    m[15] = 0x7010; m[16] = 0x7001; m[17] = 0x2037;
-    m[18] = 0x7008; m[19] = 0x7001; m[20] = 0x7800;
-    m[21] = 0x7004; m[22] = 0x7001; m[23] = 0x7400;
-    m[24] = 0x7002; m[25] = 0x7001; m[26] = 0x2038;
-    m[27] = 0x3039; m[28] = 0x6039; m[29] = 0x7001;
-    m[30] = 0x503A; m[31] = 0x7001;
+    m[0] = 0x2032;
+    m[1] = 0x0033;
+    m[2] = 0x3034;
+    m[3] = 0x2032;
+    m[4] = 0x1033;
+    m[5] = 0x3035;
+    m[6] = 0x7800;
+    m[7] = 0x7400;
+    m[8] = 0x2032;
+    m[9] = 0x7200;
+    m[10] = 0x7100;
+    m[11] = 0x7080;
+    m[12] = 0x7040;
+    m[13] = 0x7020;
+    m[14] = 0x2036;
+    m[15] = 0x7010;
+    m[16] = 0x7001;
+    m[17] = 0x2037;
+    m[18] = 0x7008;
+    m[19] = 0x7001;
+    m[20] = 0x7800;
+    m[21] = 0x7004;
+    m[22] = 0x7001;
+    m[23] = 0x7400;
+    m[24] = 0x7002;
+    m[25] = 0x7001;
+    m[26] = 0x2038;
+    m[27] = 0x3039;
+    m[28] = 0x6039;
+    m[29] = 0x7001;
+    m[30] = 0x503A;
+    m[31] = 0x7001;
     // subroutine
-    m[59] = 0x2032; m[60] = 0xC03A;
+    m[59] = 0x2032;
+    m[60] = 0xC03A;
     // data
-    m[50] = 0x1234; m[51] = 0x5678;
-    m[54] = 0x7FFF; m[55] = 0x8001;
+    m[50] = 0x1234;
+    m[51] = 0x5678;
+    m[54] = 0x7FFF;
+    m[55] = 0x8001;
     m[56] = 0xFFFF;
     return m;
 }
@@ -186,7 +210,7 @@ void Cpu::execAND()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "nothing\n\n";
         }
         this->increaseSC();
     }
@@ -220,7 +244,7 @@ void Cpu::execADD()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "nothing\n\n";
         }
         this->increaseSC();
     }
@@ -256,7 +280,7 @@ void Cpu::execLDA()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "nothing\n\n";
         }
         this->increaseSC();
     }
@@ -291,7 +315,7 @@ void Cpu::execSTA()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "Nothing\n\n";
         }
         this->increaseSC();
     }
@@ -318,7 +342,7 @@ void Cpu::execBUN()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "Nothing\n\n";
         }
         this->increaseSC();
     }
@@ -345,7 +369,7 @@ void Cpu::execBSA()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "Nothing\n\n";
         }
         this->increaseSC();
     }
@@ -381,7 +405,7 @@ void Cpu::execISZ()
         }
         else
         {
-            std::cout << "Noting\n\n";
+            std::cout << "nothing\n\n";
         }
         this->increaseSC();
     }
