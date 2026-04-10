@@ -73,7 +73,7 @@ void Cpu::fetch()
         case 0:
             this->AR.load(this->PC.value);
             std::cout << "T" << std::dec << this->sc << ":\nAR <- PC\n";
-            std::cout << std::hex << "AR= 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR= 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
             this->increaseSC();
             break;
         case 1:
@@ -97,7 +97,7 @@ void Cpu::decode()
             this->decoder = (this->IR.value >> 12) & 0x7;
             this->AR.load(this->IR.value);
             std::cout << "T" << std::dec << this->sc << ":\nI <- IR(15), Decode opcode IR(12-14), AR <- IR(0-11)\n";
-            std::cout << std::hex << "I= " << this->I << ", D" << this->decoder << "= 1, AR= 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "I= " << this->I << ", D" << this->decoder << "= 1, AR= 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
             this->increaseSC();
             break;
         }
@@ -183,7 +183,7 @@ void Cpu::execAND()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -217,7 +217,7 @@ void Cpu::execADD()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -253,7 +253,7 @@ void Cpu::execLDA()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -287,7 +287,7 @@ void Cpu::execSTA()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -314,7 +314,7 @@ void Cpu::execBUN()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -326,7 +326,7 @@ void Cpu::execBUN()
     {
         this->PC.load(this->AR.value);
         std::cout << "T" << this->sc << ":\nPC <- AR, SC <- 0\n";
-        std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+        std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
         this->clearSC();
     }
 };
@@ -341,7 +341,7 @@ void Cpu::execBSA()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -354,14 +354,14 @@ void Cpu::execBSA()
         this->m.write(this->AR.value, this->PC.value);
         this->AR.increment();
         std::cout << "T" << this->sc << ":\nM[AR] <- PC, AR <- AR + 1\n";
-        std::cout << std::hex << "M[AR] = 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value - 1) << ", AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+        std::cout << std::hex << "M[AR] = 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value - 1) << ", AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 5)
     {
         this->PC.load(this->AR.value);
         std::cout << "T" << this->sc << ":\nPC <- AR, SC <- 0\n";
-        std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+        std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
         this->clearSC();
     }
 };
@@ -376,7 +376,7 @@ void Cpu::execISZ()
         {
             this->AR.load(this->m.read(this->AR.value));
             std::cout << "AR <- M[AR]\n";
-            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(4) << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         }
         else
         {
@@ -465,28 +465,28 @@ void Cpu::execSPA()
     std::cout << "T" << this->sc << ":\nRegister-reference instruction : SPA\nIf (AC(15)=0) then PC <- PC+1\n";
     if (!((this->AC.value >> 15) & 1))
         this->PC.increment();
-    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSNA()
 {
     std::cout << "T" << this->sc << ":\nRegister-reference instruction : SNA\nIf (AC(15)=1) then PC <- PC+1\n";
     if ((this->AC.value >> 15) & 1)
         this->PC.increment();
-    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSZA()
 {
     std::cout << "T" << this->sc << ":\nRegister-reference instruction : SZA\nIf (AC=0) then PC <- PC+1\n";
     if (!this->AC.value)
         this->PC.increment();
-    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSZE()
 {
     std::cout << "T" << this->sc << ":\nRegister-reference instruction : SZE\nIf (E=0) then PC <- PC+1\n";
     if (!this->E)
         this->PC.increment();
-    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(4) << this->PC.value << "\n\n";
+    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execHLT()
 {
