@@ -73,14 +73,14 @@ void Cpu::fetch()
         case 0:
             this->AR.load(this->PC.value);
             std::cout << "T" << std::dec << this->sc << ":\nAR <- PC\n";
-            std::cout << std::hex << "AR= " << this->AR.value << "\n\n";
+            std::cout << std::hex << "AR= " << std::uppercase << std::setw(4) << std::setfill('0') << this->AR.value << "\n\n";
             this->increaseSC();
             break;
         case 1:
             this->IR.load(this->m.read(this->AR.value));
             this->PC.increment();
             std::cout << "T" << std::dec << this->sc << ":\nIR <- M[AR], PC <- PC + 1\n";
-            std::cout << std::hex << "IR= " << this->IR.value << ", PC= " << this->PC.value << "\n\n";
+            std::cout << std::hex << "IR= " << std::uppercase << std::setw(4) << std::setfill('0') << this->IR.value << ", PC= " << this->PC.value << "\n\n";
             this->increaseSC();
             break;
         }
@@ -97,7 +97,7 @@ void Cpu::decode()
             this->decoder = (this->IR.value >> 12) & 0x7;
             this->AR.load(this->IR.value);
             std::cout << "T" << std::dec << this->sc << ":\nI <- IR(15), Decode opcode IR(12-14), AR <- IR(0-11)\n";
-            std::cout << std::hex << "I= " << this->I << ", D" << this->decoder << "= 1, AR= " << this->AR.value << "\n\n";
+            std::cout << std::hex << "I= " << this->I << ", D" << this->decoder << "= 1, AR= " << std::uppercase << std::setw(4) << std::setfill('0') << this->AR.value << "\n\n";
             this->increaseSC();
             break;
         }
