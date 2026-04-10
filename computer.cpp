@@ -89,7 +89,7 @@ void Cpu::test_init()
 
 void Cpu::fetch()
 {
-    std::cout << std::hex << "----------------- Location : " << this->PC.value << " ---------------------------\n";
+    std::cout << std::dec << "----------------- Location : " << this->PC.value << " ---------------------------\n";
     while (this->sc < 2)
     {
         switch (this->sc)
