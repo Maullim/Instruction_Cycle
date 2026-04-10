@@ -121,7 +121,7 @@ void Cpu::decode()
             this->decoder = (this->IR.value >> 12) & 0x7;
             this->AR.load(this->IR.value);
             std::cout << "T" << std::dec << this->sc << ":\nI <- IR(15), Decode opcode IR(12-14), AR <- IR(0-11)\n";
-            std::cout << std::hex << "I= " << this->I << ", D" << this->decoder << "= 1, AR= 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
+            std::cout << std::dec << "I= " << this->I << ", D" << this->decoder << "= 1, " << std::hex << "AR= 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
             this->increaseSC();
             break;
         }
@@ -201,7 +201,7 @@ void Cpu::execAND()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : AND 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -218,14 +218,14 @@ void Cpu::execAND()
     else if (this->sc == 4)
     {
         this->DR.load(this->m.read(this->AR.value));
-        std::cout << "T" << this->sc << ":\nDR <- M[AR]\n";
+        std::cout << "T" << std::dec << this->sc << ":\nDR <- M[AR]\n";
         std::cout << std::hex << "DR = 0x" << std::setfill('0') << std::setw(4) << this->DR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 5)
     {
         this->AC.load(this->AC.value & this->DR.value);
-        std::cout << "T" << this->sc << ":\nAC <- AC & DR, SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nAC <- AC & DR, SC <- 0\n";
         std::cout << std::hex << "AC = 0x" << std::setfill('0') << std::setw(4) << this->AC.value << "\n\n";
         this->clearSC();
     }
@@ -235,7 +235,7 @@ void Cpu::execADD()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : ADD 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -252,7 +252,7 @@ void Cpu::execADD()
     else if (this->sc == 4)
     {
         this->DR.load(this->m.read(this->AR.value));
-        std::cout << "T" << this->sc << ":\nDR <- M[AR]\n";
+        std::cout << "T" << std::dec << this->sc << ":\nDR <- M[AR]\n";
         std::cout << std::hex << "DR = 0x" << std::setfill('0') << std::setw(4) << this->DR.value << "\n\n";
         this->increaseSC();
     }
@@ -261,8 +261,8 @@ void Cpu::execADD()
         uint32_t sum = static_cast<uint32_t>(this->AC.value) + static_cast<uint32_t>(this->DR.value);
         this->E = (sum >> 16) & 1;
         this->AC.load(static_cast<uint16_t>(sum));
-        std::cout << "T" << this->sc << ":\nAC <- AC + DR, E <- C_out, SC <- 0\n";
-        std::cout << std::hex << "AC = 0x" << std::setfill('0') << std::setw(4) << this->AC.value << ", E = " << this->E << "\n\n";
+        std::cout << "T" << std::dec << this->sc << ":\nAC <- AC + DR, E <- C_out, SC <- 0\n";
+        std::cout << std::hex << "AC = 0x" << std::setfill('0') << std::setw(4) << this->AC.value << std::dec << ", E = " << this->E << "\n\n";
         this->clearSC();
     }
 }
@@ -271,7 +271,7 @@ void Cpu::execLDA()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : LDA 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -288,14 +288,14 @@ void Cpu::execLDA()
     else if (this->sc == 4)
     {
         this->DR.load(this->m.read(this->AR.value));
-        std::cout << "T" << this->sc << ":\nDR <- M[AR]\n";
+        std::cout << "T" << std::dec << this->sc << ":\nDR <- M[AR]\n";
         std::cout << std::hex << "DR = 0x" << std::setfill('0') << std::setw(4) << this->DR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 5)
     {
         this->AC.load(this->DR.value);
-        std::cout << "T" << this->sc << ":\nAC <- DR, SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nAC <- DR, SC <- 0\n";
         std::cout << std::hex << "AC = 0x" << std::setfill('0') << std::setw(4) << this->AC.value << "\n\n";
         this->clearSC();
     }
@@ -305,7 +305,7 @@ void Cpu::execSTA()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : STA 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -322,7 +322,7 @@ void Cpu::execSTA()
     else if (this->sc == 4)
     {
         this->m.write(this->AR.value, this->AC.value);
-        std::cout << "T" << this->sc << ":\nM[AR] <- AC, SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nM[AR] <- AC, SC <- 0\n";
         std::cout << std::hex << "M[AR] = 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value) << "\n\n";
         this->clearSC();
     }
@@ -332,7 +332,7 @@ void Cpu::execBUN()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : BUN 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -349,7 +349,7 @@ void Cpu::execBUN()
     else if (this->sc == 4)
     {
         this->PC.load(this->AR.value);
-        std::cout << "T" << this->sc << ":\nPC <- AR, SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nPC <- AR, SC <- 0\n";
         std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
         this->clearSC();
     }
@@ -359,7 +359,7 @@ void Cpu::execBSA()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : BSA 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -377,14 +377,14 @@ void Cpu::execBSA()
     {
         this->m.write(this->AR.value, this->PC.value);
         this->AR.increment();
-        std::cout << "T" << this->sc << ":\nM[AR] <- PC, AR <- AR + 1\n";
+        std::cout << "T" << std::dec << this->sc << ":\nM[AR] <- PC, AR <- AR + 1\n";
         std::cout << std::hex << "M[AR] = 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value - 1) << ", AR = 0x" << std::setfill('0') << std::setw(3) << this->AR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 5)
     {
         this->PC.load(this->AR.value);
-        std::cout << "T" << this->sc << ":\nPC <- AR, SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nPC <- AR, SC <- 0\n";
         std::cout << std::hex << "PC = 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
         this->clearSC();
     }
@@ -394,7 +394,7 @@ void Cpu::execISZ()
 {
     if (this->sc == 3)
     {
-        std::cout << "T" << this->sc << ":\n";
+        std::cout << "T" << std::dec << this->sc << ":\n";
         std::cout << "Memory-reference instruction : ISZ 00" << this->decoder << ", I= " << this->I << "\n";
         if (this->I)
         {
@@ -411,20 +411,20 @@ void Cpu::execISZ()
     else if (this->sc == 4)
     {
         this->DR.load(this->m.read(this->AR.value));
-        std::cout << "T" << this->sc << ":\nDR <- M[AR]\n";
+        std::cout << "T" << std::dec << this->sc << ":\nDR <- M[AR]\n";
         std::cout << std::hex << "DR = 0x" << std::setfill('0') << std::setw(4) << this->DR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 5)
     {
         this->DR.increment();
-        std::cout << "T" << this->sc << ":\nDR <- DR + 1\n";
+        std::cout << "T" << std::dec << this->sc << ":\nDR <- DR + 1\n";
         std::cout << std::hex << "DR = 0x" << std::setfill('0') << std::setw(4) << this->DR.value << "\n\n";
         this->increaseSC();
     }
     else if (this->sc == 6)
     {
-        std::cout << "T" << this->sc << ":\nM[AR] <- DR, IF (DR = 0) then (PC <- PC + 1), SC <- 0\n";
+        std::cout << "T" << std::dec << this->sc << ":\nM[AR] <- DR, IF (DR = 0) then (PC <- PC + 1), SC <- 0\n";
         this->m.write(this->AR.value, this->DR.value);
         std::cout << std::hex << "M[AR] = 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value) << "\n";
         if (this->DR.value == 0)
@@ -441,25 +441,25 @@ void Cpu::execISZ()
 void Cpu::execCLA()
 {
     this->AC.clear();
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CLA\nAC <- 0\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CLA\nAC <- 0\n";
     std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << "\n\n";
 }
 void Cpu::execCLE()
 {
     this->E = 0;
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CLE\nE <- 0\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CLE\nE <- 0\n";
     std::cout << "E= " << this->E << "\n\n";
 }
 void Cpu::execCMA()
 {
     this->AC.value = ~this->AC.value & this->AC.mask;
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CMA\nAC <- ~AC\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CMA\nAC <- ~AC\n";
     std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << "\n\n";
 }
 void Cpu::execCME()
 {
     this->E = !this->E;
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CME\nE <- ~E\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CME\nE <- ~E\n";
     std::cout << "E= " << this->E << "\n\n";
 }
 void Cpu::execCIR()
@@ -467,47 +467,47 @@ void Cpu::execCIR()
     bool old_E = this->E;
     this->E = this->AC.value & 1;
     this->AC.value = (static_cast<uint16_t>(old_E) << 15) | (this->AC.value >> 1);
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CIR\nAC <- shr AC, AC(15) <- E, E <- AC(0)\n";
-    std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << ", E= " << this->E << "\n\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CIR\nAC <- shr AC, AC(15) <- E, E <- AC(0)\n";
+    std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << std::dec << ", E= " << this->E << "\n\n";
 }
 void Cpu::execCIL()
 {
     bool old_E = this->E;
     this->E = (this->AC.value >> 15) & 1;
     this->AC.value = ((this->AC.value << 1) | static_cast<uint16_t>(old_E)) & this->AC.mask;
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : CIL\nAC <- shl AC, AC(0) <- E, E <- AC(15)\n";
-    std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << ", E= " << this->E << "\n\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : CIL\nAC <- shl AC, AC(0) <- E, E <- AC(15)\n";
+    std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << std::dec << ", E= " << this->E << "\n\n";
 }
 void Cpu::execINC()
 {
     this->AC.increment();
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : INC\nAC <- AC + 1\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : INC\nAC <- AC + 1\n";
     std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value << "\n\n";
 }
 void Cpu::execSPA()
 {
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : SPA\nIf (AC(15)=0) then PC <- PC+1\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : SPA\nIf (AC(15)=0) then PC <- PC+1\n";
     if (!((this->AC.value >> 15) & 1))
         this->PC.increment();
     std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSNA()
 {
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : SNA\nIf (AC(15)=1) then PC <- PC+1\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : SNA\nIf (AC(15)=1) then PC <- PC+1\n";
     if ((this->AC.value >> 15) & 1)
         this->PC.increment();
     std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSZA()
 {
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : SZA\nIf (AC=0) then PC <- PC+1\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : SZA\nIf (AC=0) then PC <- PC+1\n";
     if (!this->AC.value)
         this->PC.increment();
     std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSZE()
 {
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : SZE\nIf (E=0) then PC <- PC+1\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : SZE\nIf (E=0) then PC <- PC+1\n";
     if (!this->E)
         this->PC.increment();
     std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
@@ -515,7 +515,7 @@ void Cpu::execSZE()
 void Cpu::execHLT()
 {
     this->S = 0;
-    std::cout << "T" << this->sc << ":\nRegister-reference instruction : HLT\nS <- 0\n\n";
+    std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : HLT\nS <- 0\n\n";
 }
 
 void Cpu::increaseSC()
