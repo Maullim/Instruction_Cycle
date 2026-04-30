@@ -96,6 +96,9 @@ public:
     ASM(std::string &location) { load_asm_code(location); }
 
     std::array<std::uint16_t, 4096> &assembler();
+
+    // ⑤ Cpu 종료 후 변수 (DEC/HEX 라벨) 의 최종값 dump
+    void print_variable_dump(const std::array<uint16_t, 4096> &finalMemory) const;
 };
 
 #endif

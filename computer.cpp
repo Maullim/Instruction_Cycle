@@ -97,20 +97,30 @@ void Cpu::test_init()
 
 void Cpu::interruptCycle()
 {
+    std::cout << std::dec << "----------------- Interrupt Cycle ---------------------------\n";
 
     // RT0
     this->AR.clear();
     this->TR.load(this->PC.value);
+    std::cout << "RT0:\nAR <- 0, TR <- PC\n";
+    std::cout << std::hex << "AR= 0x" << std::setfill('0') << std::setw(3) << this->AR.value
+              << ", TR= 0x" << std::setfill('0') << std::setw(4) << this->TR.value << "\n\n";
 
     // RT1
     this->m.write(this->AR.value, this->TR.value);
     this->PC.clear();
+    std::cout << "RT1:\nM[AR] <- TR, PC <- 0\n";
+    std::cout << std::hex << "M[0]= 0x" << std::setfill('0') << std::setw(4) << this->m.read(this->AR.value)
+              << ", PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 
     // RT2
     this->PC.increment();
     this->IEN = 0;
     this->R = 0;
     this->sc = 0;
+    std::cout << "RT2:\nPC <- PC+1, IEN <- 0, R <- 0, SC <- 0\n";
+    std::cout << std::hex << "PC= 0x" << std::setfill('0') << std::setw(3) << this->PC.value
+              << std::dec << ", IEN= " << this->IEN << ", R= " << this->R << "\n\n";
 }
 
 void Cpu::fetch()
@@ -563,43 +573,49 @@ void Cpu::execHLT()
 
 void Cpu::execINP()
 {
+    // Mano 의미: AC[7:0] ← INPR, 상위 비트 보존
+    this->AC.value = (this->AC.value & 0xFF00) | (this->INPR.value & 0x00FF);
     this->FGI = 0;
-    this->AC.load(this->INPR.value);
-    this->sc = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : INP\nAC(0-7) <- INPR, FGI <- 0\n";
+    std::cout << std::hex << "AC= 0x" << std::setfill('0') << std::setw(4) << this->AC.value
+              << std::dec << ", FGI= " << this->FGI << "\n\n";
 }
 
 void Cpu::execOUT()
 {
-    this->FGO = 0;
+    // OUTR mask 0x00FF 라 자동으로 AC[7:0] 만 적재됨
     this->OUTR.load(this->AC.value);
-    this->sc = 0;
+    this->FGO = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : OUT\nOUTR <- AC(0-7), FGO <- 0\n";
+    std::cout << std::hex << "OUTR= 0x" << std::setfill('0') << std::setw(2) << this->OUTR.value
+              << std::dec << ", FGO= " << this->FGO << "\n\n";
 }
 
 void Cpu::execSKI()
 {
-    if (FGI)
-    {
-        this->PC.increment();
-    }
-    this->sc = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : SKI\nIf (FGI=1) then PC <- PC+1\n";
+    if (this->FGI) this->PC.increment();
+    std::cout << "FGI= " << this->FGI << ", " << std::hex << "PC= 0x"
+              << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execSKO()
 {
-    if (FGO)
-    {
-        this->PC.increment();
-    }
-    this->sc = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : SKO\nIf (FGO=1) then PC <- PC+1\n";
+    if (this->FGO) this->PC.increment();
+    std::cout << "FGO= " << this->FGO << ", " << std::hex << "PC= 0x"
+              << std::setfill('0') << std::setw(3) << this->PC.value << "\n\n";
 }
 void Cpu::execION()
 {
     this->IEN = 1;
-    this->sc = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : ION\nIEN <- 1\n";
+    std::cout << "IEN= " << this->IEN << "\n\n";
 }
 void Cpu::execIOF()
 {
     this->IEN = 0;
-    this->sc = 0;
+    std::cout << "T" << std::dec << this->sc << ":\nInput-output instruction : IOF\nIEN <- 0\n";
+    std::cout << "IEN= " << this->IEN << "\n\n";
 }
 
 void Cpu::increaseSC()

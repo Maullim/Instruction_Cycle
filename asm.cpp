@@ -326,3 +326,30 @@ void ASM::print_hex_image()
     }
     std::printf("============================================================\n");
 }
+
+// Section 5 — Variable Dump (Cpu 종료 후 메모리 → 변수 최종값)
+void ASM::print_variable_dump(const std::array<uint16_t, 4096> &finalMemory) const
+{
+    std::printf("\n");
+    std::cout << "⑤ 프로그램 실행결과 — 모든 변수 값 list (symbol + 값)\n";
+    std::printf("============================================================\n");
+    std::printf("  %-8s |  %-9s |  %-6s |  %s\n",
+                "Symbol", "Address", "Hex", "Decimal");
+    std::printf("============================================================\n");
+
+    bool found = false;
+    for (const auto &row : first_pass_result)
+    {
+        if (row.label.empty()) continue;
+        if (row.op != "DEC" && row.op != "HEX") continue;
+
+        uint16_t val        = finalMemory[row.lc];
+        int16_t  signed_val = static_cast<int16_t>(val);
+
+        std::printf("  %-8s |  %03X       |  %04X   |  %d\n",
+                    row.label.c_str(), row.lc, val, signed_val);
+        found = true;
+    }
+    if (!found) std::printf("  (변수 없음)\n");
+    std::printf("============================================================\n");
+}
