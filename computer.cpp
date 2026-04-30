@@ -95,8 +95,9 @@ void Cpu::test_init()
     this->S = 1;
 }
 
-void Cpu::interruptCycle(){
-    
+void Cpu::interruptCycle()
+{
+
     // RT0
     this->AR.clear();
     this->TR.load(this->PC.value);
@@ -105,7 +106,7 @@ void Cpu::interruptCycle(){
     this->m.write(this->AR.value, this->TR.value);
     this->PC.clear();
 
-    //RT2
+    // RT2
     this->PC.increment();
     this->IEN = 0;
     this->R = 0;
@@ -180,6 +181,7 @@ void Cpu::execute()
             this->execISZ();
             break;
         case 7:
+        {
             uint16_t _AR = this->AR.value;
             if (this->I)
             {
@@ -225,7 +227,8 @@ void Cpu::execute()
                     this->execHLT();
             }
             this->clearSC();
-            break;
+        }
+        break;
         default:
             break;
         }
@@ -614,12 +617,13 @@ bool Cpu::isRunning() const
     return this->S;
 }
 
-bool Cpu::R_IS_ON() const {
+bool Cpu::R_IS_ON() const
+{
     return this->R;
 }
 
-    // cpu 테스트
-    std::array<uint16_t, 4096> Cpu::memory_load()
+// cpu 테스트
+std::array<uint16_t, 4096> Cpu::memory_load()
 {
     return this->m.value;
 }
