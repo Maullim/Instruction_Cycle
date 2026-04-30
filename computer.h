@@ -35,12 +35,12 @@ struct Register
 
 struct Memory
 {
-    std::array<uint16_t, 100> value; // register의 값
+    std::array<uint16_t, 4096> value; // register의 값
 
     // Memory 기본 생성자
     Memory() : value{} {}
     // Memory 초기화
-    Memory(std::array<uint16_t, 100> value)
+    Memory(std::array<uint16_t, 4096> value)
         : value(std::move(value)) {}
 
     // AR의 값을 받아서, v로 변경
@@ -79,8 +79,8 @@ private:
     // memory
     Memory m;
 
-    static std::array<uint16_t, 100> initMemory();
-    static std::array<uint16_t, 100> testMemory();
+    static std::array<uint16_t, 4096> initMemory();
+    static std::array<uint16_t, 4096> testMemory();
 
     // AND 실행
     void execAND();
@@ -136,6 +136,6 @@ public:
     bool isRunning() const;
 
     // 테스트
-    std::array<uint16_t, 100> memory_load();
+    std::array<uint16_t, 4096> memory_load();
 };
 #endif
