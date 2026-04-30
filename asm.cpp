@@ -1,4 +1,7 @@
 #include "asm.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <algorithm>
 #include <cctype>
 #include <cstdio>

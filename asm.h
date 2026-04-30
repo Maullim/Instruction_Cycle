@@ -1,13 +1,11 @@
 #ifndef ASM_H
 #define ASM_H
 
-#include <iostream>
 #include <string>
 #include <unordered_map>
 #include <array>
 #include <vector>
-#include <fstream>
-#include <sstream>
+#include <cstdint>
 
 class ASM
 {
@@ -91,8 +89,7 @@ private:
     void print_hex_image();
 
 public:
-    // 생성자
-    ASM() {}
+    // 생성자 — 입력 파일 경로를 받아 즉시 load_asm_code 호출
     ASM(std::string &location) { load_asm_code(location); }
 
     std::array<std::uint16_t, 4096> &assembler();
