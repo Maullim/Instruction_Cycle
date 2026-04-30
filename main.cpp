@@ -17,9 +17,16 @@ int main()
     // myCpu.test_init();
     while (myCpu.isRunning())
     {
-        myCpu.fetch();
-        myCpu.decode();
-        myCpu.execute();
+        if (myCpu.R_IS_ON())
+        {
+            myCpu.interruptCycle();
+        }
+        else
+        {
+            myCpu.fetch();
+            myCpu.decode();
+            myCpu.execute();
+        }
     }
 
     std::cout << "----------------- Instruction cycle 종료 --------------------\n"

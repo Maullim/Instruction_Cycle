@@ -65,6 +65,12 @@ private:
     // Register TR(16bit):
     Register TR{"TR"};
 
+    // Register OUTR(16bit):
+    Register OUTR{"OUTR", 0x00FF};
+
+    // Register INPR(16bit):
+    Register INPR{"INPR", 0x00FF};
+
     // sequence counter
     short sc = 0;
 
@@ -72,7 +78,10 @@ private:
     bool I = 0;
     bool S = 1;
     bool E = 0;
-
+    bool R = 0;
+    bool FGI = 0;
+    bool FGO = 0;
+    bool IEN = 0;
     // Decoder
     short decoder = 0;
 
@@ -120,6 +129,18 @@ private:
     void execSZE();
     // HLT 실행
     void execHLT();
+    // INP 실행
+    void execINP();
+    // OUT 실행
+    void execOUT();
+    // SKI 실행
+    void execSKI();
+    // SKO 실행
+    void execSKO();
+    // ION 실행
+    void execION();
+    // IOF 실행
+    void execIOF();
 
     // SC <- 0;
     void clearSC();
@@ -130,11 +151,14 @@ private:
 public:
     void init();
     void test_init();
-    void ASM_init(const std::array<uint16_t, 4096>&);
+    void ASM_init(const std::array<uint16_t, 4096> &);
+    void interruptCycle();
     void fetch();
     void decode();
     void execute();
     bool isRunning() const;
+
+    bool R_IS_ON() const;
 
     // 테스트
     std::array<uint16_t, 4096> memory_load();

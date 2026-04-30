@@ -95,6 +95,23 @@ void Cpu::test_init()
     this->S = 1;
 }
 
+void Cpu::interruptCycle(){
+    
+    // RT0
+    this->AR.clear();
+    this->TR.load(this->PC.value);
+
+    // RT1
+    this->m.write(this->AR.value, this->TR.value);
+    this->PC.clear();
+
+    //RT2
+    this->PC.increment();
+    this->IEN = 0;
+    this->R = 0;
+    this->sc = 0;
+}
+
 void Cpu::fetch()
 {
     std::cout << std::dec << "----------------- Location : " << this->PC.value << " ---------------------------\n";
@@ -163,14 +180,25 @@ void Cpu::execute()
             this->execISZ();
             break;
         case 7:
+            uint16_t _AR = this->AR.value;
             if (this->I)
             {
                 std::cout << "I/O instruction, I= 1\n";
-                std::cout << "미구현\nExecute input-output instruction, SC <- 0\n";
+                if (_AR & (1 << 11))
+                    this->execINP();
+                else if (_AR & (1 << 10))
+                    this->execOUT();
+                else if (_AR & (1 << 9))
+                    this->execSKI();
+                else if (_AR & (1 << 8))
+                    this->execSKO();
+                else if (_AR & (1 << 7))
+                    this->execION();
+                else if (_AR & (1 << 6))
+                    this->execIOF();
             }
             else
             {
-                uint16_t _AR = this->AR.value;
                 if (_AR & (1 << 11))
                     this->execCLA();
                 else if (_AR & (1 << 10))
@@ -201,6 +229,10 @@ void Cpu::execute()
         default:
             break;
         }
+
+        // interrupt cycle
+        if (this->IEN && (this->FGI || this->FGO))
+            this->R = 1;
     }
 }
 
@@ -526,6 +558,47 @@ void Cpu::execHLT()
     std::cout << "T" << std::dec << this->sc << ":\nRegister-reference instruction : HLT\nS <- 0\n\n";
 }
 
+void Cpu::execINP()
+{
+    this->FGI = 0;
+    this->AC.load(this->INPR.value);
+    this->sc = 0;
+}
+
+void Cpu::execOUT()
+{
+    this->FGO = 0;
+    this->OUTR.load(this->AC.value);
+    this->sc = 0;
+}
+
+void Cpu::execSKI()
+{
+    if (FGI)
+    {
+        this->PC.increment();
+    }
+    this->sc = 0;
+}
+void Cpu::execSKO()
+{
+    if (FGO)
+    {
+        this->PC.increment();
+    }
+    this->sc = 0;
+}
+void Cpu::execION()
+{
+    this->IEN = 1;
+    this->sc = 0;
+}
+void Cpu::execIOF()
+{
+    this->IEN = 0;
+    this->sc = 0;
+}
+
 void Cpu::increaseSC()
 {
     this->sc++;
@@ -541,8 +614,12 @@ bool Cpu::isRunning() const
     return this->S;
 }
 
-// cpu 테스트
-std::array<uint16_t, 4096> Cpu::memory_load()
+bool Cpu::R_IS_ON() const {
+    return this->R;
+}
+
+    // cpu 테스트
+    std::array<uint16_t, 4096> Cpu::memory_load()
 {
     return this->m.value;
 }

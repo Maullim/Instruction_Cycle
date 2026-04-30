@@ -71,9 +71,11 @@ class ASM {
         // 소멸자
         ~ASM() {
         }
-    public:
+
         void first_pass_run();
         void second_pass_run();
+    public:
+        std::array<std::uint16_t, 4096>& assembler();
 };
 
 
