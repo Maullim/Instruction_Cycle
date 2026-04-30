@@ -1,139 +1,176 @@
-## 프로젝트 개요
+## 프로젝트 개요 (HW#2)
 
-Mano 컴퓨터의 CPU Instruction Cycle을 C++로 시뮬레이션한 프로그램.
-메모리에 저장된 프로그램을 PC=0부터 fetch → decode → execute 순서로 실행하며,
-각 타이밍(T0, T1, T2...)별 마이크로 오퍼레이션과 레지스터 값을 출력한다.
+Mano 기본컴퓨터 **어셈블러** 를 C++ 로 구현하고, HW#1 의 Cpu 시뮬레이터(instruction cycle) 와 연결한 통합 프로그램.
+
+흐름:
+1. 어셈블리 소스 파일 로드 (`first_pass/sample.asm` 등)
+2. **First Pass**: 라벨 → 주소 (SYMBOL_TABLE) + 각 줄의 LC 배정 + 표시용 string 생성
+3. **Second Pass**: 16-bit 메모리 이미지 (`object_data`) 생성
+4. 메모리 이미지를 **HW#1 Cpu** 에 주입 → fetch/decode/execute 사이클 실행
+5. Cpu 종료 후 **변수 (DEC/HEX 라벨) 의 최종 메모리 값** 출력
+
+> HW#1 (Instruction Cycle) 의 정보는 [README_V1.md](README_V1.md) 참조.
+
+---
+
+## HW#1 → HW#2 주요 변경 사항
+
+| 항목 | 변경 |
+|---|---|
+| Memory size | 100 → **4096** (12-bit 주소 공간 전체) |
+| Cpu I/O 명령 | INP / OUT / SKI / SKO / ION / IOF **본문 + 출력 구현** (HW#1 미구현) |
+| Cpu Interrupt cycle | RT0/RT1/RT2 **출력 추가** (HW#1 logic 만 있던 부분) |
+| `Cpu::ASM_init()` | 외부 메모리 이미지를 받아 Cpu 메모리에 주입하는 신규 메서드 |
+| `ASM` 클래스 | 신규. 어셈블링 + 5 섹션 출력 |
+| `main.cpp` | ASM → Cpu pipeline orchestrator 로 재작성 |
+| 출력 섹션 | ①②③④⑤ 5개 단계로 정돈 (보고서용) |
 
 ---
 
 ## 파일 구조
 
 ```
-Instruction_Cycle/
-├── main.cpp        # 진입점. Cpu 객체 생성 및 명령어 사이클 루프
-├── computer.h      # Register, Memory, Cpu 클래스 선언
-└── computer.cpp    # 각 클래스 메서드 구현
+cppStudy/
+├── main.cpp               # 진입점. ASM → Cpu pipeline
+├── asm.h, asm.cpp         # ASM 클래스 (어셈블러)
+├── computer.h, computer.cpp  # Cpu / Register / Memory (HW#1 확장)
+├── first_pass/
+│   ├── sample.asm         # 기본 샘플 (Mano 표 6-5 의 LDA/ADD/STA 예제)
+│   └── test_all.asm       # 모든 구현 명령어 exercise 용 종합 테스트
+├── README.md              # 이 파일 (HW#2)
+└── README_V1.md           # HW#1 README
 ```
 
 ---
 
-## 소스 코드 설명
+## ASM 클래스 (asm.h / asm.cpp)
 
-### `computer.h` / `computer.cpp`
+### 핵심 멤버
 
-**`Register` struct**
-- `name`, `value`(uint16_t), `mask`(uint16_t) 멤버 보유
-- `mask`로 비트 폭 제한: AR·PC는 `0x0FFF`(12-bit), 나머지는 `0xFFFF`(16-bit)
-- `load()`, `increment()`, `clear()` 메서드 제공
+| 멤버 | 채우는 시점 | 역할 |
+|---|---|---|
+| `asmcode` | `load_asm_code()` | 입력 파일 전체 텍스트 |
+| `first_pass_result` | `parse_assembly()` + `first_pass_run()` | 줄별 구조화된 데이터 (lineNo/label/op/operand/indirect/comment + lc/display_instr) |
+| `SYMBOL_TABLE` | `assign_locations()` | label → 16-bit 주소 매핑 |
+| `object_data` | `second_pass_run()` | **최종 산출물** — Cpu 에 주입할 16-bit × 4096 메모리 이미지 |
 
-**`Memory` struct**
-- `uint16_t value[100]` 배열로 메모리 구현
-- `read(AR)`, `write(AR, v)` 메서드 제공
-
-**`Cpu` class**
-- 레지스터: AR, PC, DR, AC, IR, TR
-- 플립플롭: I, S, E
-- 시퀀스 카운터: sc
-- `fetch()` — T0(AR←PC), T1(IR←M[AR], PC++) 수행
-- `decode()` — T2(I·opcode·AR 추출) 수행
-- `execute()` — T3~ 명령어별 exec 함수 호출, clearSC()까지 루프
-
-**명령어 구현 목록**
-
-| 종류 | 명령어 |
-|------|--------|
-| Memory-reference | AND, ADD, LDA, STA, BUN, BSA, ISZ |
-| Register-reference | CLA, CLE, CMA, CME, CIR, CIL, INC, SPA, SNA, SZA, SZE, HLT |
-
-### `main.cpp`
+### `assembler()` 호출 순서
 
 ```cpp
-Cpu myCpu;
-myCpu.init();           // 표 6-3 메모리 초기값 로드
-while (myCpu.isRunning()) {
-    myCpu.fetch();
-    myCpu.decode();
-    myCpu.execute();
-}
+print_input_source();      // ① 입력 echo
+parse_assembly();          // 한 줄씩 토큰화 → first_pass_result
+first_pass_run();          //   ├─ assign_locations()       : SYMBOL_TABLE + lc 배정
+                           //   └─ build_display_strings()  : "LDA 004", "0053" 등 표시 문자열 생성
+print_symbol_table();      //   Address Symbol Table
+print_label_resolved();    // ② Mano 표 6-4 형식
+second_pass_run();         //   binary 인코딩 → object_data
+print_hex_image();         // ③ Mano 표 6-3 형식
+return object_data;
 ```
 
-> `test_init()` 호출 시 모든 구현 명령어를 커버하는 테스트 프로그램으로 전환
+### 설계 원칙
+
+- **클래스 경계는 OO, 내부는 절차적**: ASM 클래스 자체는 Cpu 와의 인터페이스 (`std::array<uint16_t, 4096>` 산출) 때문에 존재. 내부 메서드들은 위에서 아래로 흐르는 절차적 코드.
+- **토큰화 1회**: `parse_assembly` 안에서 단 한 번. 이후 단계들은 `first_pass_result` 만 순회.
+- **print 메서드는 pure reader**: 토큰화 / 변환 / 룩업 0. 멤버를 읽기만 함.
+- **데이터 자체가 변환됨**: print 시점이 아니라 first_pass_run 단계에서 라벨 해석, DEC/HEX → hex 변환이 끝나 `display_instr` 에 영구 저장.
 
 ---
 
-## C++ 컴파일러 환경 구축
+## 출력 — 5 섹션
 
-### Linux (Ubuntu/Debian)
-```bash
-sudo apt update
-sudo apt install g++
-```
+| # | 헤더 | 내용 | 참고 |
+|---|---|---|---|
+| ① | 입력으로 사용한 sample program | asmcode 그대로 echo | Mano 표 6-5 |
+| ② | label을 주소로 변환한 결과 | Symbol Table + Location/Instruction/Comments 표 (mnemonic 유지, label → 주소, DEC/HEX → 16-bit hex) | Mano 표 6-4 |
+| ③ | 주소와 명령어 16진 코드 | Location + 16-bit binary | Mano 표 6-3 |
+| ④ | 각 명령어 사이클 실행결과 | HW#1 Cpu 의 fetch/decode/execute 출력 | HW#1 그대로 |
+| ⑤ | 프로그램 실행결과 | DEC/HEX 라벨 변수의 종료 후 메모리 값 (hex + signed decimal) | — |
 
+---
+
+## 지원 명령어 (어셈블러 + Cpu 둘 다 구현)
+
+| 분류 | 명령어 |
+|---|---|
+| Memory-reference (MRI) | AND, ADD, LDA, STA, BUN, BSA, ISZ — direct + indirect 둘 다 |
+| Register-reference (Non-MRI) | CLA, CLE, CMA, CME, CIR, CIL, INC, SPA, SNA, SZA, SZE, HLT |
+| Input-Output (I/O) | INP, OUT, SKI, SKO, ION, IOF |
+| Pseudo | ORG, END, DEC, HEX |
+
+Indirect 주소지정은 operand 뒤에 `I` 토큰 (예: `LDA C I`).
+
+---
+
+## 빌드 및 실행
+
+### Linux
 ```bash
-# 컴파일 및 실행
-g++ main.cpp computer.cpp -o a.out
+g++ main.cpp asm.cpp computer.cpp -o a.out
 ./a.out
 ```
-
----
 
 ### macOS
-
-**Homebrew 미설치 시:**
 ```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-```bash
-brew install gcc
-```
-
-```bash
-# 컴파일 및 실행
-g++ main.cpp computer.cpp -o a.out
+# Xcode CLI tools 또는 Homebrew g++ 필요
+g++ main.cpp asm.cpp computer.cpp -o a.out
 ./a.out
 ```
 
-> Xcode Command Line Tools만 설치해도 됨:
-> `xcode-select --install`
-
----
-
-### Windows
-
-**방법 1: MinGW-w64 (권장)**
-> 설치 방법: https://movefun-tech.tistory.com/40
-
-1. [mingw-w64.org](https://www.mingw-w64.org)에서 MinGW-w64 다운로드
-- 설치한 장소: https://www.msys2.org/ 에서 x86-64로
-2. 설치 후 MSYS2 터미널에서 다음 코드 실행
-```bash
-pacman -S mingw-w64-ucrt-x86_64-gcc
-```
-3. 설치 후 환경변수 `PATH`에 `C:\msys2\mingw64\bin` 추가
-
-4. 명령 프롬프트(cmd) 또는 PowerShell에서:
+### Windows (MSYS2 / MinGW-w64)
 ```cmd
 chcp 65001
-g++ main.cpp computer.cpp -o a.exe
+g++ main.cpp asm.cpp computer.cpp -o a.exe
 .\a.exe
 ```
 
-> `chcp 65001` — 한글 출력을 위해 터미널 인코딩을 UTF-8로 설정
+> `chcp 65001` — 한글 + Korean Korean section 헤더 (①②③④⑤) 출력을 위해 UTF-8.
 
-**방법 2: WSL (Windows Subsystem for Linux)**
-1. PowerShell (관리자)에서:
-```powershell
-wsl --install
-```
-2. 설치 후 Ubuntu 터미널에서 Linux 방법과 동일하게 진행
+> WSL 사용 시 Linux 빌드 명령 그대로 사용 가능.
+
+입력 파일 경로는 [main.cpp:14](main.cpp#L14) 에서 지정. 기본은 `first_pass/sample.asm`.
 
 ---
 
-### 버전 확인
-```bash
-g++ --version
+## 입력 sample 예시
+
+### `first_pass/sample.asm` (Mano 표 6-3 기본 예제)
+```
+        ORG 000             / Origin of program is location 0
+        LDA A               / Load first operand into AC
+        ADD B               / Add second operand to AC
+        STA C               / Store sum in location C
+        HLT                 / Halt computer
+A,      DEC 83
+B,      DEC -23
+C,      HEX 0000
+        END
 ```
 
+기대 결과:
+- Symbol Table: A → 004, B → 005, C → 006
+- Hex Image: 2004, 1005, 3006, 7001, 0053, FFE9, 0000
+- Variable Dump: **C = 60** (= 83 + (-23))
+
+### `first_pass/test_all.asm` (모든 명령어 exercise)
+MRI 7개 + Non-MRI 12개 + I/O 6개 + indirect + subroutine (BSA / BUN I) + ISZ 분기 + DEC/HEX 모두 포함. 입력 경로를 이 파일로 바꿔 실행하면 모든 명령의 사이클 trace 와 변수 dump 확인 가능.
+
 ---
-> git repo: https://github.com/Maullim/Instruction_Cycle
+
+## 어셈블리 문법
+
+```
+[LABEL,]  OP  [OPERAND [I]]  [/ comment]
+```
+
+- **LABEL**: 식별자 + `,` (예: `A,`)
+- **OP**: 명령어 또는 pseudo (대소문자 무관 — 내부에서 대문자로 정규화)
+- **OPERAND**: 라벨 / 십진수 (DEC) / 16진수 (HEX) / 직접 주소
+- **I**: indirect 플래그 (operand 뒤에 별도 토큰)
+- **comment**: `/` 이후 줄 끝까지
+
+빈 줄 / 주석 전용 줄은 무시. ORG/END 는 메모리에 적재되지 않음.
+
+---
+
+> Project repo: https://github.com/Maullim/Instruction_Cycle
