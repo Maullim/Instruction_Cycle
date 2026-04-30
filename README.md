@@ -59,7 +59,7 @@ cppStudy/
 ### `assembler()` 호출 순서
 
 ```cpp
-print_input_source();      // ① 입력 echo
+print_input_source();      // ① 파일 입력
 parse_assembly();          // 한 줄씩 토큰화 → first_pass_result
 first_pass_run();          //   ├─ assign_locations()       : SYMBOL_TABLE + lc 배정
                            //   └─ build_display_strings()  : "LDA 004", "0053" 등 표시 문자열 생성
@@ -76,7 +76,7 @@ return object_data;
 
 | # | 헤더 | 내용 | 참고 |
 |---|---|---|---|
-| ① | 입력으로 사용한 sample program | asmcode 그대로 echo | Mano 표 6-5 |
+| ① | 입력으로 사용한 sample program | asmcode 그대로 출력 | Mano 표 6-5 |
 | ② | label을 주소로 변환한 결과 | Symbol Table + Location/Instruction/Comments 표 (mnemonic 유지, label → 주소, DEC/HEX → 16-bit hex) | Mano 표 6-4 |
 | ③ | 주소와 명령어 16진 코드 | Location + 16-bit binary | Mano 표 6-3 |
 | ④ | 각 명령어 사이클 실행결과 | HW#1 Cpu 의 fetch/decode/execute 출력 | HW#1 그대로 |
