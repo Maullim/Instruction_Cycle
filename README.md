@@ -10,6 +10,8 @@ Mano 기본컴퓨터 **어셈블러** 를 C++ 로 구현하고, HW#1 의 Cpu 시
 5. Cpu 종료 후 **변수 (DEC/HEX 라벨) 의 최종 메모리 값** 출력
 
 > HW#1 (Instruction Cycle) 의 정보는 [README_V1.md](README_V1.md) 참조.
+>
+> ASM 클래스의 구조와 각 기능은 [ASM_GUIDE.md](ASM_GUIDE.md) 참조.
 
 ---
 
@@ -128,7 +130,57 @@ g++ main.cpp asm.cpp computer.cpp -o a.exe
 
 > WSL 사용 시 Linux 빌드 명령 그대로 사용 가능.
 
-입력 파일 경로는 [main.cpp:14](main.cpp#L14) 에서 지정. 기본은 `first_pass/sample.asm`.
+---
+
+## 샘플 테스트 변경 방법
+
+입력 어셈블리 파일은 [main.cpp:14](main.cpp#L14) 에 하드코딩되어 있습니다. 다른 샘플로 실행하려면 두 가지 방법:
+
+### 방법 1 — main.cpp 의 경로 직접 수정
+
+```cpp
+// main.cpp
+std::string sample_file = "first_pass/sample.asm";   // ← 이 경로 변경
+```
+
+예: `first_pass/test_all.asm` (모든 명령어 exercise) 로 변경 후 재빌드:
+```bash
+g++ main.cpp asm.cpp computer.cpp -o a.out
+./a.out
+```
+
+### 방법 2 — 새 샘플 .asm 파일 작성 후 경로 지정
+
+1. 원하는 위치에 `.asm` 파일 작성. 어셈블리 문법은 [어셈블리 문법](#어셈블리-문법) 섹션 참조.
+2. main.cpp 의 경로를 새 파일로 변경.
+3. 재빌드 + 실행.
+
+예시 — `test/my_test.asm` 신규 작성:
+```
+        ORG 000
+        LDA X
+        ADD Y
+        STA Z
+        HLT
+X,      DEC 10
+Y,      DEC 20
+Z,      DEC 0
+        END
+```
+
+main.cpp:
+```cpp
+std::string sample_file = "test/my_test.asm";
+```
+
+빌드 후 실행 시 ① 입력 echo, ② Symbol Table + label-resolved listing, ③ Hex memory image, ④ Cpu cycle trace, ⑤ 변수 dump (`Z = 30`) 가 차례로 출력됩니다.
+
+### 경로 작성 시 주의
+
+- **상대 경로** 는 실행 시점의 작업 디렉토리(CWD) 기준. 일반적으로 `cppStudy/` 에서 `./a.out` 실행하므로 `first_pass/sample.asm` 같은 형태가 맞음.
+- **절대 경로** (`/first_pass/...`) 는 시스템 루트 기준으로 해석되니 사용 X.
+
+---
 
 ---
 
