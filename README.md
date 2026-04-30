@@ -70,13 +70,6 @@ print_hex_image();         // ③ Mano 표 6-3 형식
 return object_data;
 ```
 
-### 설계 원칙
-
-- **클래스 경계는 OO, 내부는 절차적**: ASM 클래스 자체는 Cpu 와의 인터페이스 (`std::array<uint16_t, 4096>` 산출) 때문에 존재. 내부 메서드들은 위에서 아래로 흐르는 절차적 코드.
-- **토큰화 1회**: `parse_assembly` 안에서 단 한 번. 이후 단계들은 `first_pass_result` 만 순회.
-- **print 메서드는 pure reader**: 토큰화 / 변환 / 룩업 0. 멤버를 읽기만 함.
-- **데이터 자체가 변환됨**: print 시점이 아니라 first_pass_run 단계에서 라벨 해석, DEC/HEX → hex 변환이 끝나 `display_instr` 에 영구 저장.
-
 ---
 
 ## 출력 — 5 섹션
@@ -206,22 +199,6 @@ C,      HEX 0000
 
 ### `first_pass/test_all.asm` (모든 명령어 exercise)
 MRI 7개 + Non-MRI 12개 + I/O 6개 + indirect + subroutine (BSA / BUN I) + ISZ 분기 + DEC/HEX 모두 포함. 입력 경로를 이 파일로 바꿔 실행하면 모든 명령의 사이클 trace 와 변수 dump 확인 가능.
-
----
-
-## 어셈블리 문법
-
-```
-[LABEL,]  OP  [OPERAND [I]]  [/ comment]
-```
-
-- **LABEL**: 식별자 + `,` (예: `A,`)
-- **OP**: 명령어 또는 pseudo (대소문자 무관 — 내부에서 대문자로 정규화)
-- **OPERAND**: 라벨 / 십진수 (DEC) / 16진수 (HEX) / 직접 주소
-- **I**: indirect 플래그 (operand 뒤에 별도 토큰)
-- **comment**: `/` 이후 줄 끝까지
-
-빈 줄 / 주석 전용 줄은 무시. ORG/END 는 메모리에 적재되지 않음.
 
 ---
 
