@@ -9,9 +9,9 @@ Mano 기본컴퓨터 **어셈블러** 를 C++ 로 구현하고, HW#1 의 Cpu 시
 4. 메모리 이미지를 **HW#1 Cpu** 에 주입 → fetch/decode/execute 사이클 실행
 5. Cpu 종료 후 **변수 (DEC/HEX 라벨) 의 최종 메모리 값** 출력
 
-> HW#1 (Instruction Cycle) 의 정보는 [README_V1.md](README_V1.md) 참조.
+> HW#1 (Instruction Cycle) 의 정보는 [docs/README_V1.md](docs/README_V1.md) 참조.
 >
-> ASM 클래스의 구조와 각 기능은 [ASM_GUIDE.md](ASM_GUIDE.md) 참조.
+> ASM 의 `asm.h` / `asm.cpp` 상세 설명은 [docs/ASM_GUIDE.md](docs/ASM_GUIDE.md) 참조.
 
 ---
 
