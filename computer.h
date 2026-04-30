@@ -130,6 +130,7 @@ private:
 public:
     void init();
     void test_init();
+    void ASM_init(const std::array<uint16_t, 4096>&);
     void fetch();
     void decode();
     void execute();

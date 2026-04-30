@@ -79,6 +79,14 @@ void Cpu::init()
     this->S = 1;
 }
 
+void Cpu::ASM_init(const std::array<uint16_t, 4096> &_memory)
+{
+    this->m = Memory{_memory};
+    this->PC.clear();
+    this->sc = 0;
+    this->S = 1;
+}
+
 void Cpu::test_init()
 {
     this->m = Memory{testMemory()};
